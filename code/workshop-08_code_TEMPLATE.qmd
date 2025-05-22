@@ -1,8 +1,8 @@
 ---
 title: "Workshop 8 TEMPLATE"
-subtitle: "insert your section time here"
-author: "insert your name here"
-date: "insert your name here"
+subtitle: "Thursday 4 pm"
+author: "Jessi Rumkin"
+date: "May 22, 2025"
 format:
   html:
     toc: true # use this to display a table of contents
@@ -44,6 +44,12 @@ library(ggeffects) # getting model predictions
 library(MuMIn) # model selection
 
 # read in your data here
+drought_exp <- read_xlsx(
+  #file path
+  here("data", "Valliere_etal_EcoApps_Data.xlsx"),
+  #specify the sheet I want to read in
+  sheet = "First Harvest"
+)
 
 ```
 
@@ -71,11 +77,11 @@ theme_set(theme_bw())
 # 2. Clean data
 
 ```{r data-cleaning}
-# INSERT COMMENT HERE
-drought_exp_clean <- drought_exp |> # INSERT COMMENT HERE
-  # INSERT COMMENT HERE
+# creating a clean data frame
+drought_exp_clean <- drought_exp |>  # starting with the drought_exp object
+  # cleaning column names
   clean_names() |> 
-  # INSERT COMMENT HERE
+  # making a column of full species names
   mutate(species_name = case_match(
     species,
     "ENCCAL" ~ "Encelia californica", # bush sunflower
@@ -86,13 +92,13 @@ drought_exp_clean <- drought_exp |> # INSERT COMMENT HERE
     "STIPUL" ~ "Stipa pulchra", # purple needlegrass
     "LOTSCO" ~ "Lotus scoparius" # deerweed
   )) |> 
-  # INSERT COMMENT HERE
+  # making a column of full name for drought treatment
   mutate(water_treatment = case_match(
     water,
     "WW" ~ "Well watered",
     "DS" ~ "Drought stressed"
   )) |> 
-  # INSERT COMMENT HERE
+  # makes the species name a factor instead of characters (factor with 7 levels when checked in the console how??)
   mutate(species_name = as_factor(species_name),
          species_name = fct_relevel(species_name,
                                     "Lotus scoparius",
@@ -102,12 +108,12 @@ drought_exp_clean <- drought_exp |> # INSERT COMMENT HERE
                                     "Stipa pulchra",
                                     "Eschscholzia californica",
                                     "Grindelia camporum")) |> 
-  # INSERT COMMENT HERE
+  # makes the water treatment a factor instead of characters (run str(drought_exp_clean) in console)
   mutate(water_treatment = as_factor(water_treatment),
          water_treatment = fct_relevel(water_treatment,
                                        "Drought stressed",
                                        "Well watered")) |> 
-  # INSERT COMMENT HERE
+  # select on these 4 columns for species, treatment, sla, and total g
   select(species_name, water_treatment, sla, total_g)
 ```
 
@@ -121,8 +127,8 @@ And displaying some rows from the data frame:
 
 ```{r showing-data-frame-rows}
 slice_sample(
-  drought_exp_clean, # INSERT COMMENT HERE
-  n = 10 # INSERT COMMENT HERE
+  drought_exp_clean, # displaying rows from drought_exp_clean
+  n = 10 # 10 rows sidplayed
 )
 ```
 
