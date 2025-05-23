@@ -298,31 +298,70 @@ model7 <- lm(
 
 ```{r model-diagnostics}
 # INSERT MODEL DIAGNOSTICS CODE HERE
+
+par(mfrow = c(2,2)) #displays the plots in a 2 by 2
+plot(model1)
+plot(model2)
+plot(model3)
+plot(model4) #this one looks a little different because its only categorical data, that's fine. Many of these will be like that
+plot(model5)
+plot(model6)
+plot(model7)
+
 ```
 
 ## Model selection
 
 ```{r model-selection}
 # INSERT MODEL SELECTION CODE HERE
+AICc(
+  model0,
+  model1,
+  model2,
+  model3,
+  model4,
+  model5,
+  model6,
+  model7
+  
+) |> 
+  arrange(AICc)
+
+#output in the console each model has an AICc value. The values don't mean anything on their own, they are only to compare! We are looking for the smallest one. arranging to list the models from smallest to biggest, and we see that model4 has the smallest AICc value. Again, the magnitude of AICc means literally nothing.
+#AICc is looking for which model is the simplest while still being the best predictor (the more predictor variables you have, the more complexity, the harder is it to use and interpret the model)
+
+
 ```
 
 Look at the model summary:
 
 ```{r model-summary}
 # INSERT MODEL SUMMARY CODE HERE
+summary(model4)
+#reference level for water_treatment: drought stressed (they are comping well watered TO drought stressed)
+#reference level for species_name: lotus scoparius (its the only one that doesn't show up in the summary!)
+#the first level that you set, that will always be the reference. That was set above when set the reference.
+
 ```
 
 ## Stop and think: what does this model mean?  
 
 **What is the best model?**
 
+The best model that predicts total plant mass (g) includes water treatment and species. (F(7, 62) =27.08, p < 0.001, $\alpha\ = 0.05), but not SLA. 
  
 
 **How much variation in the response (total mass, in grams) does this model explain?**
 
+This model explained 73% (adjusted R^2^) of the variation in total plant mass.
+#the adjusted r-squared is .7257 so this tells us the 73%
 
 
 **How do we interpret the effects of the predictors on the response variable (again, total mass in grams)?**
+
+On average, plant masses in drought stressed conditions were 0.12 $\pm$ 0.02 g less than plant masses in well watered conditions across species.
+
+Across water treatments, all species have different (and higher) masses than _Lotus scoparius_ expect _Penstemon centranthifolius_.
 
 
 
@@ -330,6 +369,14 @@ Look at the model summary:
 
 ```{r model-predictions}
 # INSERT MODEL PREDICTIONS CODE HERE
+model4_predictions <- ggpredict(
+  model4,
+  terms = c("species_name", "water_treatment") 
+) |> 
+  rename(species_name = x,
+         water_treatment = group)
+
+
 ```
 
 Before plotting, LOOK AT THE PREDICTION DATA FRAME using `View(model4_predictions)` or by clicking on the object in the Environment.
